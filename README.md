@@ -20,12 +20,6 @@ export default defineNuxtConfig({
 
 Import `countCardWords` from `@froq/og-covers-layer/card-words` in host `nuxt.config` hooks (add a `github:` dependency on this repo if your package manager does not hoist the layer).
 
-### Private repository (CI / Workers Builds)
-
-[giget](https://github.com/unjs/giget) clones the layer during `nuxt prepare` / `nuxt generate`. Set **`GIGET_AUTH`** to a GitHub token with **Contents: Read** on `0froq/og-layer` (fine-grained or classic `repo` scope). giget sends it as `Authorization: Bearer …`.
-
-For `pnpm install` of a `github:0froq/og-layer#…` dependency, configure git HTTPS auth separately (for example `GITHUB_TOKEN` in CI with `git config` credential helper).
-
 ## Site-specific values
 
 Configure in the host app:
@@ -59,6 +53,10 @@ Auto-imported helpers from this layer:
 
 ## Fonts
 
-The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt`.
+The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt` (font license only; layer source is MIT).
 
-This repo is the standalone layer (`@froq/og-covers-layer`). Tag releases (for example `v0.1.0`) and pin `extends` to `github:0froq/og-layer#v0.1.0`.
+## License
+
+Layer source code is [MIT](LICENSE). EB Garamond used on share cards is under SIL OFL-1.1 (`public/fonts/EB-Garamond-OFL.txt`).
+
+Pin releases with `github:0froq/og-layer#v0.1.0`.
