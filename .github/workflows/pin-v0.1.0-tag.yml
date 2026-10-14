@@ -1,0 +1,33 @@
+name: Pin v0.1.0 release tag
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/pin-v0.1.0-tag.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pin-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create annotated tag v0.1.0 on 661bbc2
+        run: |
+          set -euo pipefail
+          SHA=661bbc2ed11eaf965993113bd115ab95e2f11971
+          git rev-parse --verify "${SHA}^{commit}"
+          git tag -f v0.1.0 "${SHA}"
+          git push origin "refs/tags/v0.1.0" --force
+
+      - name: Delete mistaken v0.1.0 branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/v0.1.0" || echo "branch v0.1.0 already absent"
