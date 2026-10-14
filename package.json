@@ -1,0 +1,26 @@
+{
+  "name": "@froq/og-covers-layer",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Self-contained Nuxt layer: nuxt-og-image v7 paper share cards (Takumi), fonts, and cover resolution.",
+  "exports": {
+    ".": "./nuxt.config.ts",
+    "./card-words": "./shared/card-words.ts"
+  },
+  "dependencies": {
+    "@fontsource/eb-garamond": "5.3.0",
+    "@fontsource/geist-mono": "5.2.7",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/noto-serif-sc": "5.3.1",
+    "@nuxt/fonts": "^1",
+    "@takumi-rs/core": "^2.15.0",
+    "nuxt-og-image": "^7"
+  },
+  "devDependencies": {
+    "nuxt": "^4.6.1",
+    "nuxtseo-devtools-host": "^1"
+  },
+  "peerDependencies": {
+    "nuxt": "^4.6.0"
+  }
+}
