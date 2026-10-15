@@ -13,6 +13,7 @@ export interface ContentCoverSource {
 
 export interface PaperSource {
   title?: string | null
+  description?: string | null
   evergreen?: boolean | null
   kind?: string | null
   created?: string | null
@@ -24,6 +25,7 @@ export interface PaperSource {
 
 export interface PaperFields {
   title: string
+  description: string
   evergreen: boolean
   created: string
   updated: string
@@ -96,9 +98,25 @@ export function contentCoverSource(
   return { collection, path: page.path, cover: page.cover }
 }
 
-export function paperFields(page: PaperSource | null | undefined): PaperFields {
+/**
+ * Text for the line under the title.
+ * Collapses whitespace. Blank means the card omits the line.
+ * Truncation is the renderer's (two lines, then an ellipsis), so CJK is not cut here.
+ */
+export function cardDescription(value: unknown): string {
+  if (typeof value !== 'string')
+    return ''
+  return value.replace(/\s+/g, ' ').trim()
+}
+
+/**
+ * Fields for the paper card.
+ * Description is frontmatter `description`, then `siteDescription`.
+ */
+export function paperFields(page: PaperSource | null | undefined, siteDescription?: string | null): PaperFields {
   return {
     title: page?.title?.trim() || '',
+    description: cardDescription(page?.description) || cardDescription(siteDescription),
     evergreen: page?.evergreen === true || page?.kind === 'evergreen',
     created: filled(page?.created) || filled(page?.date) || '',
     updated: filled(page?.last_modified) || filled(page?.updated) || '',

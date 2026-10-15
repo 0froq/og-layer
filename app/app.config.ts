@@ -4,6 +4,7 @@ export default defineAppConfig({
     mark: 'froQ',
     colors: {
       title: '#1a1917',
+      description: '#5c5a54',
       paper: '#f4f2ec',
       border: 'rgba(26, 25, 23, 0.12)',
       mark: 'rgba(26, 25, 23, 0.11)',

@@ -18,9 +18,15 @@
   },
   "devDependencies": {
     "nuxt": "^4.6.1",
-    "nuxtseo-devtools-host": "^1"
+    "nuxtseo-devtools-host": "^1",
+    "typescript": "~5.9.3",
+    "vue-tsc": "^3.3.13"
   },
   "peerDependencies": {
     "nuxt": "^4.6.0"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/cover.test.ts",
+    "typecheck": "nuxt typecheck"
   }
 }

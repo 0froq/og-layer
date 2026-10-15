@@ -4,6 +4,7 @@ declare module 'nuxt/schema' {
       mark?: string
       colors?: {
         title?: string
+        description?: string
         paper?: string
         border?: string
         mark?: string

@@ -44,11 +44,20 @@ For each content entry:
 
 `ogImage: false` skips the generated image.
 
+The generated card draws frontmatter `description` under the title (`paperFields(page, siteDescription)` falls back to the site description). The line is smaller and lower contrast than the title, clamped to two lines with an ellipsis, and omitted when both sources are blank. Pass it from the host:
+
+```ts
+defineOgImage('Paper', {
+  title: () => paperFields(page, siteDescription).title,
+  description: () => paperFields(page, siteDescription).description,
+})
+```
+
 ## Content pages
 
 Auto-imported helpers from this layer:
 
-- `contentOgOverride`, `explicitContentCover`, `paperFields`, `ogComponentName`, `ogExtraProps`
+- `contentOgOverride`, `explicitContentCover`, `paperFields`, `cardDescription`, `ogComponentName`, `ogExtraProps`
 - `countCardWords` — import `@froq/og-covers-layer/card-words` in `nuxt.config` hooks
 
 ## Fonts
