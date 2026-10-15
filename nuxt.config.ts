@@ -27,7 +27,8 @@ export default defineNuxtConfig({
       extension: 'png',
     },
     // Satori/fontless only. Takumi takes unicode-range slices from `@nuxt/fonts`.
-    fontSubsets: ['latin', 'latin-ext', 'chinese-simplified'],
+    // Han is not a named subset: `chinese-simplified` drops rare ideographs.
+    fontSubsets: ['latin', 'latin-ext'],
     compatibility: {
       prerender: { browser: false },
     },
@@ -75,13 +76,23 @@ export default defineNuxtConfig({
         preload: false,
       },
       {
+        // `chinese-simplified` is a ~8k glyph cut. It has the usual punctuation
+        // (em dash, fullwidth marks, middle dot, brackets) and common Han, and
+        // it omits rarer ideographs such as U+6E9E 溞. `400.css` is the whole
+        // face, one unicode-range slice per file. Takumi serves each codepoint
+        // from the slice that contains it.
         name: 'Noto Serif SC',
-        provider: 'fontsource',
+        provider: 'npm',
         weights: [400],
         styles: ['normal'],
-        subsets: ['chinese-simplified'],
         global: true,
         preload: false,
+        providerOptions: {
+          npm: {
+            package: '@fontsource/noto-serif-sc',
+            file: '400.css',
+          },
+        },
       },
     ],
   },

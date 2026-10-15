@@ -3,10 +3,10 @@
 // evergreen label, mono meta, and the brand mark, fully inside, bottom right.
 // No hover, flip, or tilt.
 //
-// Takumi, not Satori. Latin faces are unicode-range slices and Han is the
-// chinese-simplified subset; Takumi walks that fallback chain and reads woff2.
-// Satori does not read woff2, and one family name keeps a single slice, so a
-// Han title loses the rest of its glyphs.
+// Takumi, not Satori. Latin faces and Noto Serif SC are unicode-range slices
+// (the full 400 face, not the chinese-simplified cut). Takumi walks that
+// fallback chain and reads woff2. Satori does not read woff2, and one family
+// name keeps a single slice, so a Han title loses the rest of its glyphs.
 
 const props = withDefaults(defineProps<{
   title?: string
