@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// 1200×630 paper card. Front face of the IssuePeekCard (serif title,
-// evergreen label, mono meta) plus the brand mark, fully inside, bottom right.
+// 1200×630 paper card. Serif title, optional description beneath it,
+// evergreen label, mono meta, and the brand mark, fully inside, bottom right.
 // No hover, flip, or tilt.
 //
 // Takumi, not Satori. Latin faces are unicode-range slices and Han is the
@@ -10,12 +10,14 @@
 
 const props = withDefaults(defineProps<{
   title?: string
+  description?: string
   evergreen?: boolean | string
   created?: string
   updated?: string
   words?: number | string
 }>(), {
   title: 'void',
+  description: '',
   evergreen: false,
   created: '',
   updated: '',
@@ -24,6 +26,7 @@ const props = withDefaults(defineProps<{
 
 const defaultColors = {
   title: '#1a1917',
+  description: '#5c5a54',
   paper: '#f4f2ec',
   border: 'rgba(26, 25, 23, 0.12)',
   mark: 'rgba(26, 25, 23, 0.11)',
@@ -40,7 +43,8 @@ const DATE_RE = /(\d{4})-(\d{2})-(\d{2})/
 const fg = colors.title
 const serif = '"Instrument Serif", "Noto Serif SC", serif'
 const mono = '"Geist Mono", ui-monospace, monospace'
-// Watermark only. Title and evergreen stay on Instrument Serif.
+// Watermark only. Title, description, and evergreen stay on Instrument Serif
+// (Noto Serif SC for Han).
 const markFace = '"EB Garamond"'
 
 function formatCardDate(value?: string): string {
@@ -64,6 +68,8 @@ function formatCompact(n: number): string {
 }
 
 const showEvergreen = computed(() => props.evergreen === true || props.evergreen === 'true')
+
+const descriptionText = computed(() => cardDescription(props.description))
 
 const wordCount = computed(() => {
   const value = typeof props.words === 'string' ? Number(props.words) : props.words
@@ -117,6 +123,15 @@ const markStyle = {
   color: colors.mark,
 } as const
 
+// Title stays 76px. text-fit:none stops Takumi shrinking it when the
+// description is long; flex-shrink:0 keeps the block from compressing.
+const headingStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '760px',
+  flexShrink: 0,
+} as const
+
 const titleStyle = {
   display: 'block',
   width: '760px',
@@ -128,12 +143,32 @@ const titleStyle = {
   lineHeight: 1.2,
   color: fg,
   lineClamp: 3,
+  flexShrink: 0,
+  textFit: 'none',
+} as const
+
+const descriptionStyle = {
+  display: 'block',
+  width: '760px',
+  marginTop: '20px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  fontFamily: serif,
+  fontStyle: 'normal',
+  fontWeight: 400,
+  fontSize: '28px',
+  lineHeight: 1.45,
+  color: colors.description,
+  lineClamp: 2,
+  flexShrink: 0,
+  textFit: 'none',
 } as const
 
 const footerStyle = {
   display: 'flex',
   flexDirection: 'column',
   width: '760px',
+  flexShrink: 0,
 } as const
 
 const evergreenStyle = {
@@ -175,8 +210,16 @@ const bitStyle = { display: 'flex' } as const
     >
       {{ markText }}
     </div>
-    <div :style="titleStyle">
-      {{ title }}
+    <div :style="headingStyle">
+      <div :style="titleStyle">
+        {{ title }}
+      </div>
+      <div
+        v-if="descriptionText"
+        :style="descriptionStyle"
+      >
+        {{ descriptionText }}
+      </div>
     </div>
     <div :style="footerStyle">
       <div
