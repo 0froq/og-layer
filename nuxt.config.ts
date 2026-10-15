@@ -1,3 +1,5 @@
+import cjkSlices from './lib/cjk-slices'
+
 // Faces the host stylesheet may already load, or that only exist on the visitor's machine.
 // Listing them stops `@nuxt/fonts` from downloading stand-ins.
 const siteFaces = [
@@ -15,6 +17,8 @@ const siteFaces = [
 
 export default defineNuxtConfig({
   modules: [
+    // Before nuxt-og-image, so card fonts include the Noto slices.
+    cjkSlices,
     '@nuxt/fonts',
     'nuxt-og-image',
   ],
@@ -27,7 +31,8 @@ export default defineNuxtConfig({
       extension: 'png',
     },
     // Satori/fontless only. Takumi takes unicode-range slices from `@nuxt/fonts`.
-    fontSubsets: ['latin', 'latin-ext', 'chinese-simplified'],
+    // Han is not a named subset: `chinese-simplified` drops rare ideographs.
+    fontSubsets: ['latin', 'latin-ext'],
     compatibility: {
       prerender: { browser: false },
     },
@@ -75,6 +80,9 @@ export default defineNuxtConfig({
         preload: false,
       },
       {
+        // One file for page CSS: common Han and the usual punctuation.
+        // Rare ideographs (U+6E9E 溞) live in other slices of `400.css`.
+        // `attachNotoSlices` adds those slices for the card renderer only.
         name: 'Noto Serif SC',
         provider: 'fontsource',
         weights: [400],

@@ -8,7 +8,7 @@ Self-contained Nuxt layer for **nuxt-og-image v7** share cards (Takumi renderer)
 // nuxt.config.ts
 export default defineNuxtConfig({
   extends: [
-    ['github:0froq/og-layer#v0.1.0', { install: true }],
+    ['github:0froq/og-layer#v0.2.1', { install: true }],
   ],
   site: {
     url: 'https://your-worker.workers.dev', // absolute `og:image` origin
@@ -62,10 +62,10 @@ Auto-imported helpers from this layer:
 
 ## Fonts
 
-The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt` (font license only; layer source is MIT).
+The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). Page CSS keeps the `chinese-simplified` cut of Noto Serif SC: one file, with common Han and the usual punctuation (em dash, fullwidth marks, middle dot, brackets). Share cards also receive every `unicode-range` slice of the full weight-400 face, so a character that cut omits — U+6E9E 溞 in `透明溞不是老鼠` — still draws. The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt` (font license only; layer source is MIT).
 
 ## License
 
 Layer source code is [MIT](LICENSE). EB Garamond used on share cards is under SIL OFL-1.1 (`public/fonts/EB-Garamond-OFL.txt`).
 
-Pin releases with `github:0froq/og-layer#v0.1.0`.
+Pin releases with `github:0froq/og-layer#v0.2.1`.
