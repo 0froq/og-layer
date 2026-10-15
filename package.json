@@ -17,6 +17,7 @@
     "nuxt-og-image": "^7"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "nuxt": "^4.6.1",
     "nuxtseo-devtools-host": "^1",
     "typescript": "~5.9.3",

@@ -62,7 +62,7 @@ Auto-imported helpers from this layer:
 
 ## Fonts
 
-The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). Noto Serif SC is the full weight-400 face split by `unicode-range`, not the `chinese-simplified` subset, so rare ideographs and CJK punctuation share one fallback chain. The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt` (font license only; layer source is MIT).
+The layer registers Instrument Serif (title), Noto Serif SC (Han), Geist Mono (meta), and EB Garamond italic 400 (watermark). Page CSS keeps the `chinese-simplified` cut of Noto Serif SC: one file, with common Han and the usual punctuation (em dash, fullwidth marks, middle dot, brackets). Share cards also receive every `unicode-range` slice of the full weight-400 face, so a character that cut omits — U+6E9E 溞 in `透明溞不是老鼠` — still draws. The OFL notice for EB Garamond ships in `public/fonts/EB-Garamond-OFL.txt` (font license only; layer source is MIT).
 
 ## License
 

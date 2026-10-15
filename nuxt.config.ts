@@ -1,3 +1,5 @@
+import cjkSlices from './lib/cjk-slices'
+
 // Faces the host stylesheet may already load, or that only exist on the visitor's machine.
 // Listing them stops `@nuxt/fonts` from downloading stand-ins.
 const siteFaces = [
@@ -15,6 +17,8 @@ const siteFaces = [
 
 export default defineNuxtConfig({
   modules: [
+    // Before nuxt-og-image, so card fonts include the Noto slices.
+    cjkSlices,
     '@nuxt/fonts',
     'nuxt-og-image',
   ],
@@ -76,23 +80,16 @@ export default defineNuxtConfig({
         preload: false,
       },
       {
-        // `chinese-simplified` is a ~8k glyph cut. It has the usual punctuation
-        // (em dash, fullwidth marks, middle dot, brackets) and common Han, and
-        // it omits rarer ideographs such as U+6E9E 溞. `400.css` is the whole
-        // face, one unicode-range slice per file. Takumi serves each codepoint
-        // from the slice that contains it.
+        // One file for page CSS: common Han and the usual punctuation.
+        // Rare ideographs (U+6E9E 溞) live in other slices of `400.css`.
+        // `attachNotoSlices` adds those slices for the card renderer only.
         name: 'Noto Serif SC',
-        provider: 'npm',
+        provider: 'fontsource',
         weights: [400],
         styles: ['normal'],
+        subsets: ['chinese-simplified'],
         global: true,
         preload: false,
-        providerOptions: {
-          npm: {
-            package: '@fontsource/noto-serif-sc',
-            file: '400.css',
-          },
-        },
       },
     ],
   },

@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { Renderer } from '@takumi-rs/core'
+import { loadNotoSerifSlices } from '../lib/noto-slices.ts'
 
 // U+6E9E 溞 is the ideograph in froq.me "透明溞不是老鼠".
 // The chinese-simplified cut has the punctuation below and omits 溞.
@@ -68,17 +69,32 @@ test('the full Noto Serif SC face covers 溞 and CJK punctuation', () => {
     const point = mark.codePointAt(0) ?? 0
     assert.equal(covers(faces, point), true, `U+${point.toString(16).toUpperCase()} ${mark} is missing from 400.css`)
   }
+  const slices = loadNotoSerifSlices()
+  assert.equal(slices.length, faces.length)
+  const culprit = CULPRIT.codePointAt(0) ?? 0
+  const slice = slices.find(item => item.ranges.some((part) => {
+    const match = /U\+([0-9A-Fa-f]+)(?:-([0-9A-Fa-f]+))?/i.exec(part)
+    if (!match)
+      return false
+    const start = Number.parseInt(match[1], 16)
+    const end = match[2] ? Number.parseInt(match[2], 16) : start
+    return culprit >= start && culprit <= end
+  }))
+  assert.ok(slice)
+  assert.equal(existsSync(slice.file), true)
 })
 
-async function renderGlyph(text: string, fonts: Array<{ data: Buffer, ranges?: Array<[number, number]> }>): Promise<Buffer> {
+async function renderGlyph(text: string, fonts: Array<{ data: Buffer, family?: string }>): Promise<Buffer> {
   const renderer = new Renderer()
+  const families: string[] = []
   for (const font of fonts) {
+    const family = font.family ?? 'Noto Serif SC'
+    families.push(family)
     await renderer.registerFont({
-      name: 'Noto Serif SC',
+      name: family,
       data: font.data,
       weight: 400,
       style: 'normal',
-      ...font.ranges ? { unicodeRange: font.ranges } : {},
     })
   }
   return await renderer.render({
@@ -93,7 +109,7 @@ async function renderGlyph(text: string, fonts: Array<{ data: Buffer, ranges?: A
       type: 'text',
       text,
       style: {
-        fontFamily: 'Noto Serif SC',
+        fontFamily: families.join(', '),
         fontSize: '76px',
         color: '#1a1917',
       },
@@ -105,30 +121,41 @@ async function renderGlyph(text: string, fonts: Array<{ data: Buffer, ranges?: A
   })
 }
 
-test('溞 draws from the unicode-range slice and not the simplified cut', async () => {
+test('溞 falls through the simplified cut to its unicode-range slice', async () => {
   const needed = facesFor(faces, CULPRIT)
   assert.ok(needed.length > 0)
-  const sliced = await renderGlyph(CULPRIT, needed.map(face => ({
-    data: readFileSync(face.file),
-    ranges: face.ranges,
-  })))
   const simplified = await renderGlyph(CULPRIT, [{
     data: readFileSync(SIMPLIFIED),
   }])
-  assert.notEqual(sliced.equals(simplified), true)
+  const chained = await renderGlyph(CULPRIT, [
+    { data: readFileSync(SIMPLIFIED), family: 'Noto Serif SC Simplified' },
+    ...needed.map(face => ({
+      data: readFileSync(face.file),
+      family: 'Noto Serif SC Slice',
+    })),
+  ])
+  assert.notEqual(chained.equals(simplified), true)
 })
 
 test('a card with 溞 and punctuation can be drawn', async () => {
   const text = `${TITLE}${DESCRIPTION}`
   const needed = facesFor(faces, text)
   const renderer = new Renderer()
-  for (const face of needed) {
+  const families = ['NotoSerifSimplified']
+  await renderer.registerFont({
+    name: 'NotoSerifSimplified',
+    data: readFileSync(SIMPLIFIED),
+    weight: 400,
+    style: 'normal',
+  })
+  for (const [index, face] of needed.entries()) {
+    const name = `NotoSerifSlice${index}`
+    families.push(name)
     await renderer.registerFont({
-      name: 'Noto Serif SC',
+      name,
       data: readFileSync(face.file),
       weight: 400,
       style: 'normal',
-      unicodeRange: face.ranges,
     })
   }
   const png = await renderer.render({
@@ -146,7 +173,7 @@ test('a card with 溞 and punctuation can be drawn', async () => {
         type: 'text',
         text: TITLE,
         style: {
-          fontFamily: 'Noto Serif SC',
+          fontFamily: families.join(', '),
           fontSize: '76px',
           lineHeight: 1.2,
           color: '#1a1917',
@@ -157,7 +184,7 @@ test('a card with 溞 and punctuation can be drawn', async () => {
         type: 'text',
         text: DESCRIPTION,
         style: {
-          fontFamily: 'Noto Serif SC',
+          fontFamily: families.join(', '),
           fontSize: '28px',
           lineHeight: 1.45,
           color: '#5c5a54',
